@@ -37,3 +37,5 @@ export const useDispatchAction = <
     [dispatch, name]
   ) as DispatchAction<T>;
 };
+
+export default useDispatchAction;
