@@ -1,6 +1,10 @@
 # use-dispatch-action
 
-![npm](https://img.shields.io/npm/v/use-dispatch-action) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/elderfo/use-dispatch-action/main)
+![npm](https://img.shields.io/npm/v/use-dispatch-action)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/elderfo/use-dispatch-action/CI)
+![node-current](https://img.shields.io/node/v/use-dispatch-action)
+![npm bundle size](https://img.shields.io/bundlephobia/min/use-dispatch-action)
+![NPM](https://img.shields.io/npm/l/use-dispatch-action)
 
 This library is a simple utility function to use along side React's `useReducer` to create callback typed dispatch functions.
 
