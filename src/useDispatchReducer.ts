@@ -1,19 +1,7 @@
 import React, { useCallback } from 'react';
-import { Reducer, ReducerState, ReducerAction } from 'react';
-import { Action } from '.';
+import type { Reducer, ReducerState, ReducerAction } from 'react';
 
-type ActionArguments<T extends Action> = T extends Action<any, infer U>
-  ? [U] extends [never]
-    ? [T['type']]
-    : T extends { payload: infer P }
-    ? [T['type'], P]
-    : [T['type']]
-  : [T['type']];
-
-type DispatchFunction<
-  R extends Reducer<any, any>,
-  A = ActionArguments<ReducerAction<R>>
-> = (args: A) => void;
+import { ActionArguments, DispatchFunction } from './types';
 
 export function useDispatchReducer<R extends Reducer<any, any>>(
   reducer: R,
@@ -34,3 +22,5 @@ export function useDispatchReducer<R extends Reducer<any, any>>(
 
   return [state, dispatch];
 }
+
+export default useDispatchReducer;

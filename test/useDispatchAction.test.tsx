@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { render, fireEvent, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { useDispatchAction } from '../src';
@@ -39,8 +39,8 @@ const Component = () => {
   );
 };
 
-describe('it', () => {
-  it('renders without crashing', async () => {
+describe('useDispatchAction', () => {
+  it('dispatches expected actions', async () => {
     render(<Component />);
 
     await act(async () => {
