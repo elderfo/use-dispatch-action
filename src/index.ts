@@ -38,4 +38,6 @@ export const useDispatchAction = <
   ) as DispatchAction<T>;
 };
 
+export { useDispatchReducer } from './reducer';
+
 export default useDispatchAction;
