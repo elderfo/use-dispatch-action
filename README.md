@@ -101,21 +101,27 @@ type Actions = Action<'incrementOne'> | Action<'increment', number>;
 Creates type safe dispatch functions for the specified action
 
 ```typescript
-useDispatchAction(
-    dispatch: React.Dispatch<any>,
+useDispatchAction<TAction>(
+    dispatch: React.Dispatch<TAction>,
     action: string
-) : <TPayload>(payload: TPayload) => void | () => void
+) : DispatchAction<TActionPayload>
 ```
 
 ### Arguments
 
-- `dispatch: React.Dispatch<any>` - A dispatch method retured from `React.useReducer`
-- `action: string` - The name of the action to create. Actions names come from the second argument of the reducer function _if it is typed_.
+- `dispatch: React.Dispatch<TAction>` - A dispatch method retured from `React.useReducer`
+- `action: string` - The type of the action
 
 ### Returns
 
-- `<TPayload>(payload: TPayload) => void` - Function that accepts typed payload, if a payload is defined
-- `() => void` - When an action has no `payload`, a function with no arguments will be returned
+- `DispatchAction<TActionPayload>` - Function to dispatch action
+
+```typescript
+// For actions without a payload
+() => void;
+// For actions with a payload
+(payload: TPayload) => void;
+```
 
 ### Example
 
@@ -142,20 +148,16 @@ const Component = () => {
 Creates a reducer with a type safe dispatch method
 
 ```typescript
-useDispatchReducer<
-  TState,
-  TActions extends Action> (
+useDispatchReducer<TState, TAction> (
    reducer: React.Reducer<TState, TAction>,
    initialState: TState
 ) : [state: TState, ActionDispatcher<TAction>]
 ```
 
-Or
+`TState` and `TAction` can be infered by providing the type of a reducer.
 
 ```typescript
-useDispatchReducer<
-  TReducer exends Reducer<infer TState, infer TAction>
-> (
+useDispatchReducer<TReducer>(
    reducer: React.Reducer<TState, TAction>,
    initialState: TState
 ) : [state: TState, ActionDispatcher<TAction>]
@@ -163,20 +165,20 @@ useDispatchReducer<
 
 ### Arguments
 
-- `reducer: React.Reducer<TState, TAction>` - Reducer to be passed to
-- `initialState: TState` - State to initialize the reducer with. A note, `userDispatchReducer` does not implement lazy loading the state
+- `reducer: React.Reducer<TState, TAction>` - The
+- `initialState: TState` - State to initialize the reducer with. A note, `useDispatchReducer` does not implement lazy loading the state
 
 ### Returns
 
 A tuple with:
 
 - `state: TState` - State of the reducer
-- `ActionDispatcher<TAction>` - Function to dispatch actions.
+- `ActionDispatcher<TAction>` - Function to dispatch actions in the form of tuples
   ```typescript
   // For actions without a payload
-  ([type: string]) => void
+  ([type: string]) => void;
   // For actions with a payload
-  ([type: string, payload: action]) => void
+  ([type: string, payload: TPayload]) => void;
   ```
 
 ### Examples
@@ -201,7 +203,7 @@ const Component = () => {
 };
 ```
 
-Know the State and Action types?
+With known State and Action types
 
 ```typescript
 const Component = () => {
@@ -223,7 +225,7 @@ const Component = () => {
 };
 ```
 
-Only know the State type? The Action type will be inferred from the reducer, if possible.
+Only know the State type? The Action type can be inferred from the reducer as long as the actions are typed.
 
 ```typescript
 const Component = () => {
