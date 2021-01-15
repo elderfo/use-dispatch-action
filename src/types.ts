@@ -1,4 +1,4 @@
-import { Reducer, ReducerAction } from 'react';
+import { Reducer, ReducerAction, ReducerState } from 'react';
 
 /**
  * Defines an action and optionally it's payload
@@ -15,7 +15,10 @@ export type DispatchAction<T> = [T] extends [never]
   ? () => void
   : (payload: T) => void;
 
-export type ActionArguments<T extends Action> = T extends Action<any, infer U>
+export type DispatchActionArgs<
+  R extends Reducer<any, any>,
+  T extends Action<any, any> = ReducerAction<R>
+> = T extends Action<any, infer U>
   ? [U] extends [never]
     ? [T['type']]
     : T extends { payload: infer P }
@@ -25,5 +28,15 @@ export type ActionArguments<T extends Action> = T extends Action<any, infer U>
 
 export type DispatchFunction<
   R extends Reducer<any, any>,
-  A = ActionArguments<ReducerAction<R>>
+  A = DispatchActionArgs<R>
 > = (args: A) => void;
+
+export type DispatchProps<R extends Reducer<any, any>> = {
+  dispatch: DispatchFunction<R, DispatchActionArgs<R>>;
+  state: ReducerState<R>;
+};
+
+export type DispatchContextProps<R extends Reducer<any, any>> = {
+  initialState: ReducerState<R>;
+  reducer: R;
+} & Pick<React.ProviderProps<any>, 'children'>;
