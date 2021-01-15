@@ -12,9 +12,9 @@ import {
 
 export function useDispatchReducer<
   TFirst,
-  TActions extends Action<any, any> = ActionOrReducerAction<TFirst>,
+  TAction extends Action = ActionOrReducerAction<TFirst>,
   TState = StateOrReducerState<TFirst>,
-  TReducer extends Reducer<any, any> = Reducer<TState, TActions>
+  TReducer extends Reducer<any, any> = Reducer<TState, TAction>
 >(
   reducer: PickReducer<TFirst, TReducer>,
   initialArg: TState

@@ -1,11 +1,4 @@
-import React, {
-  Reducer,
-  ReducerState,
-  useCallback,
-  ReducerAction,
-  createContext,
-  useContext,
-} from 'react';
+import React, { Reducer, useCallback, createContext, useContext } from 'react';
 import { useDeepCompareMemo } from 'use-deep-compare';
 import {
   Action,
@@ -18,27 +11,29 @@ import {
 } from './types';
 import useDispatchReducer from './useDispatchReducer';
 
-const DispatchContext = createContext<DispatchProps<any>>(undefined as any);
+const DispatchContext = createContext<DispatchProps<any, any, any, any>>(
+  undefined as any
+);
 
 export function DispatchContextProvider<
-  TFirst,
-  TActions extends Action<any, any> = ActionOrReducerAction<TFirst>,
-  TState = StateOrReducerState<TFirst>,
-  TReducer extends Reducer<any, any> = Reducer<TState, TActions>
+  TStateOrReducer,
+  TAction extends Action = ActionOrReducerAction<TStateOrReducer>,
+  TState = StateOrReducerState<TStateOrReducer>,
+  TReducer extends Reducer<any, any> = Reducer<TState, TAction>
 >({
   initialState,
   reducer,
   children,
-}: DispatchContextProps<PickReducer<TFirst, TReducer>>): JSX.Element {
+}: DispatchContextProps<PickReducer<TStateOrReducer, TReducer>>): JSX.Element {
   const [state, dispatch] = useDispatchReducer(reducer, initialState);
 
-  const providerValue = useDeepCompareMemo<DispatchProps<TReducer>>(
+  const providerValue = useDeepCompareMemo(
     () => ({
       state,
       dispatch,
     }),
     [state]
-  );
+  ) as DispatchProps<TStateOrReducer>;
 
   return (
     <DispatchContext.Provider value={providerValue}>
@@ -60,17 +55,17 @@ export function DispatchContextConsumer<R extends Reducer<any, any>>({
   return <DispatchContext.Consumer>{render}</DispatchContext.Consumer>;
 }
 
-export function useDispatchContext<R extends Reducer<any, any>>(): [
-  ReducerState<R>,
-  ActionDispatcher<R>
-];
 export function useDispatchContext<
-  TState,
-  TActions extends Action,
-  R extends Reducer<TState, TActions> = Reducer<TState, TActions>
->(): [ReducerState<R>, ActionDispatcher<R>] {
-  const { state, dispatch } = useContext<
-    DispatchProps<Reducer<ReducerState<R>, ReducerAction<R>>>
-  >(DispatchContext);
-  return [state, dispatch];
+  TStateOrReducer,
+  TAction extends Action = ActionOrReducerAction<TStateOrReducer>,
+  TState = StateOrReducerState<TStateOrReducer>,
+  TReducer extends Reducer<any, any> = Reducer<TState, TAction>
+>(): [TState, ActionDispatcher<PickReducer<TStateOrReducer, TReducer>>] {
+  const { state, dispatch } = useContext<DispatchProps<TStateOrReducer>>(
+    DispatchContext
+  );
+  return [
+    state as TState,
+    dispatch as ActionDispatcher<PickReducer<TStateOrReducer, TReducer>>,
+  ];
 }

@@ -7,20 +7,24 @@ export const useDispatchAction = <
   TActionPayload = TAction extends Action<TActionType, infer U> ? U : never
 >(
   dispatch: Dispatch<TAction>,
-  action: TActionType
+  actionType: TActionType
 ): DispatchAction<TActionPayload> => {
   return useCallback(
-    (payload?: TAction['payload']) => {
+    (...args: any[]) => {
       // This is just to hide a TS issue
       const internalDispatch = dispatch as Dispatch<any>;
 
-      if (payload) {
-        internalDispatch({ type: action, payload });
+      if (args && args.length) {
+        internalDispatch({
+          type: actionType,
+          payload: args[0] as TActionPayload,
+        });
       } else {
-        internalDispatch({ type: action });
+        internalDispatch({ type: actionType });
       }
     },
-    [dispatch, action]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dispatch, actionType]
   ) as DispatchAction<TActionPayload>;
 };
 
