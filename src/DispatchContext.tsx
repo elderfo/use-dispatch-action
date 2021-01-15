@@ -10,21 +10,29 @@ import { useDeepCompareMemo } from 'use-deep-compare';
 import {
   Action,
   DispatchContextProps,
-  DispatchFunction,
+  ActionDispatcher,
   DispatchProps,
+  ActionOrReducerAction,
+  StateOrReducerState,
+  PickReducer,
 } from './types';
 import useDispatchReducer from './useDispatchReducer';
 
 const DispatchContext = createContext<DispatchProps<any>>(undefined as any);
 
-export function DispatchContextProvider<R extends Reducer<any, any>>({
+export function DispatchContextProvider<
+  TFirst,
+  TActions extends Action<any, any> = ActionOrReducerAction<TFirst>,
+  TState = StateOrReducerState<TFirst>,
+  TReducer extends Reducer<any, any> = Reducer<TState, TActions>
+>({
   initialState,
   reducer,
   children,
-}: DispatchContextProps<R>): JSX.Element {
+}: DispatchContextProps<PickReducer<TFirst, TReducer>>): JSX.Element {
   const [state, dispatch] = useDispatchReducer(reducer, initialState);
 
-  const providerValue = useDeepCompareMemo<DispatchProps<R>>(
+  const providerValue = useDeepCompareMemo<DispatchProps<TReducer>>(
     () => ({
       state,
       dispatch,
@@ -54,13 +62,13 @@ export function DispatchContextConsumer<R extends Reducer<any, any>>({
 
 export function useDispatchContext<R extends Reducer<any, any>>(): [
   ReducerState<R>,
-  DispatchFunction<R>
+  ActionDispatcher<R>
 ];
 export function useDispatchContext<
   TState,
   TActions extends Action,
   R extends Reducer<TState, TActions> = Reducer<TState, TActions>
->(): [ReducerState<R>, DispatchFunction<R>] {
+>(): [ReducerState<R>, ActionDispatcher<R>] {
   const { state, dispatch } = useContext<
     DispatchProps<Reducer<ReducerState<R>, ReducerAction<R>>>
   >(DispatchContext);
