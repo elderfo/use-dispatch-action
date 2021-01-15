@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import type { Reducer, ReducerState, ReducerAction } from 'react';
+import { Reducer, ReducerState, ReducerAction } from 'react';
 
 import { ActionArguments, DispatchFunction } from './types';
 
