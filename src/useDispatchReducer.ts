@@ -1,17 +1,24 @@
 import { useCallback, useReducer } from 'react';
-import { Reducer, ReducerState } from 'react';
+import { Reducer } from 'react';
 
-import { Action, DispatchActionArgs, DispatchFunction } from './types';
+import {
+  Action,
+  ActionOrReducerAction,
+  DispatchActionArgs,
+  ActionDispatcher,
+  PickReducer,
+  StateOrReducerState,
+} from './types';
 
-export function useDispatchReducer<TReducer extends Reducer<any, any>>(
-  reducer: TReducer,
-  initialArg: ReducerState<TReducer>
-): [ReducerState<TReducer>, DispatchFunction<TReducer>];
 export function useDispatchReducer<
-  TState,
-  TActions extends Action,
+  TFirst,
+  TActions extends Action<any, any> = ActionOrReducerAction<TFirst>,
+  TState = StateOrReducerState<TFirst>,
   TReducer extends Reducer<any, any> = Reducer<TState, TActions>
->(reducer: TReducer, initialArg: TState): [TState, DispatchFunction<TReducer>] {
+>(
+  reducer: PickReducer<TFirst, TReducer>,
+  initialArg: TState
+): [TState, ActionDispatcher<TReducer>] {
   const [state, dispatchInternal] = useReducer<Reducer<any, any>>(
     reducer,
     initialArg
