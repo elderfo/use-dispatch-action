@@ -4,4 +4,4 @@ export {
   ReducerContextConsumer,
   ReducerContextProvider,
   useReducerContext as useDispatchContext,
-} from './useDispatchContext';
+} from './ReducerContext';
