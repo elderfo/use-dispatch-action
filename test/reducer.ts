@@ -1,9 +1,9 @@
-type Actions =
+export type Actions =
   | { type: 'increment' }
   | { type: 'decrement' }
   | { type: 'addValue'; payload: number };
 
-type State = { counter: number };
+export type State = { counter: number };
 
 export const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
