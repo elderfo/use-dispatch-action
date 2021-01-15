@@ -27,7 +27,7 @@ const Body = ({ state, dispatch }: DispatchProps<typeof reducer>) => {
   );
 };
 
-describe('useDispatchContext', () => {
+describe('DispatchContextConsumer', () => {
   it('dispatches expected actions', async () => {
     render(<Component />);
 

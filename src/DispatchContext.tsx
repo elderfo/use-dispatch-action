@@ -52,15 +52,15 @@ export function DispatchContextConsumer<R extends Reducer<any, any>>({
   return <DispatchContext.Consumer>{render}</DispatchContext.Consumer>;
 }
 
+export function useDispatchContext<R extends Reducer<any, any>>(): [
+  ReducerState<R>,
+  DispatchFunction<R>
+];
 export function useDispatchContext<
   TState,
   TActions extends Action,
   R extends Reducer<TState, TActions> = Reducer<TState, TActions>
->(): [ReducerState<R>, DispatchFunction<R>];
-export function useDispatchContext<R extends Reducer<any, any>>(): [
-  ReducerState<R>,
-  DispatchFunction<R>
-] {
+>(): [ReducerState<R>, DispatchFunction<R>] {
   const { state, dispatch } = useContext<
     DispatchProps<Reducer<ReducerState<R>, ReducerAction<R>>>
   >(DispatchContext);
