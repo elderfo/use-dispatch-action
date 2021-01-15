@@ -14,8 +14,8 @@ const Component = () => {
   return (
     <div>
       <div title="counter">{state.counter}</div>
-      <button onClick={increment}>Increment</button>
-      <button onClick={decrement}>Decrement</button>
+      <button onClick={() => increment()}>Increment</button>
+      <button onClick={() => decrement()}>Decrement</button>
       <button onClick={() => addValue(2)}>Add Two</button>
     </div>
   );

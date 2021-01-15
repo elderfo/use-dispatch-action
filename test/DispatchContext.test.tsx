@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
+
 import { DispatchContextConsumer, DispatchContextProvider } from '../src';
 import { reducer } from './reducer';
 import { DispatchProps } from '../src/types';
