@@ -1,5 +1,11 @@
 # use-dispatch-action
 
+## 1.0.0
+
+### Major Changes
+
+- Implement useDispatchReducer and DispatchContext/useDispatchContext
+
 ## 0.2.0
 
 ### Minor Changes
