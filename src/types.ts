@@ -29,20 +29,35 @@ export type DispatchAction<T> = [T] extends [never]
   : (payload: T) => void;
 
 export type DispatchActionArgs<
-  R extends Reducer<any, any>,
-  T extends Action<any, any> = ReducerAction<R>
-> = T extends Action<any, infer U>
+  TReducer extends Reducer<any, any>,
+  TAction extends Action = ReducerAction<TReducer>
+> = TAction extends Action<any, infer U>
   ? [U] extends [never]
-    ? [T['type']]
-    : T extends { payload: infer P }
-    ? [T['type'], P]
-    : [T['type']]
-  : [T['type']];
+    ? [TAction['type']]
+    : TAction extends { payload: infer P }
+    ? [TAction['type'], P]
+    : [TAction['type']]
+  : [TAction['type']];
+
+export type ActionArgs<TAction extends Action> = TAction extends Action<
+  any,
+  infer U
+>
+  ? [U] extends [never]
+    ? [TAction['type']]
+    : TAction extends { payload: infer P }
+    ? [TAction['type'], P]
+    : [TAction['type']]
+  : [TAction['type']];
 
 export type ActionDispatcher<
   R extends Reducer<any, any>,
   A = DispatchActionArgs<R>
 > = (args: A) => void;
+
+export type ActionDispatcher2<TAction extends Action> = (
+  args: ActionArgs<TAction>
+) => void;
 
 export type DispatchProps<
   TStateOrReducer,

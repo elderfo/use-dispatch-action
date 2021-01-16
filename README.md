@@ -123,7 +123,7 @@ useDispatchAction<TAction>(
 (payload: TPayload) => void;
 ```
 
-### Example
+### Example ([types/reducer](#types-and-reducer-for-examples))
 
 ```typescript
 const Component = () => {
@@ -158,14 +158,14 @@ useDispatchReducer<TState, TAction> (
 
 ```typescript
 useDispatchReducer<TReducer>(
-   reducer: React.Reducer<TState, TAction>,
+   reducer: TReducer,
    initialState: TState
 ) : [state: TState, ActionDispatcher<TAction>]
 ```
 
 ### Arguments
 
-- `reducer: React.Reducer<TState, TAction>` - The
+- `reducer: React.Reducer<TState, TAction>` - The reducer
 - `initialState: TState` - State to initialize the reducer with. A note, `useDispatchReducer` does not implement lazy loading the state
 
 ### Returns
@@ -181,7 +181,7 @@ A tuple with:
   ([type: string, payload: TPayload]) => void;
   ```
 
-### Examples
+### Examples ([types/reducer](#types-and-reducer-for-examples))
 
 With type inference
 
@@ -250,47 +250,25 @@ const Component = () => {
 A context based dispatcher used to prevent prop drilling
 
 ```typescript
-export type DispatchContextProps<R extends Reducer<any, any>> = {
-  initialState: ReducerState<R>;
-  reducer: R;
+export type DispatchContextProps = {
+  initialState: TState;
+  reducer: React.Reducer<TState, TAction>;
 };
 ```
 
-Or
+### props
+
+- `initialState: TState` - state to initialize the reducer with
+- `reducer: React.Reducer<TState, TAction>` - The reducer
+
+### Examples ([types/reducer](#types-and-reducer-for-examples))
+
+Using a consumer
 
 ```typescript
-export type DispatchContextProps<R extends Reducer<any, any>> = {
-  initialState: ReducerState<R>;
-  reducer: R;
-};
-```
-
-###
-
-### Example
-
-```typescript
-type Actions =
-  | { type: 'increment' }
-  | { type: 'decrement' }
-  | { type: 'addValue'; payload: number };
-
-export const reducer = (state: { counter: number }, action: Actions): State => {
-  switch (action.type) {
-    case 'increment':
-      return { ...state, counter: state.counter + 1 };
-    case 'decrement':
-      return { ...state, counter: state.counter - 1 };
-    case 'addValue':
-      return { ...state, counter: state.counter + action.payload };
-    default:
-      return state;
-  }
-};
-
 const DispatchContext = () => {
   return (
-    <DispatchContextProvider reducer={reducer} initialState={initialState}>
+    <DispatchContextProvider reducer={reducer} initialState={{ counter: 0 }}>
       <DispatchContextConsumer>
         {({ state, dispatch }: DispatchProps<typeof reducer>) => (
           <div>
@@ -303,5 +281,54 @@ const DispatchContext = () => {
       </DispatchContextConsumer>
     </DispatchContextProvider>
   );
+};
+```
+
+Using `useDispatchContext`
+
+```typescript
+const Component = () => {
+  return (
+    <DispatchContextProvider initialState={{ counter: 0 }} reducer={reducer}>
+      <Counter />
+    </DispatchContextProvider>
+  );
+};
+
+const Counter = () => {
+  const [state, dispatch] = useDispatchContext<typeof reducer>();
+
+  return (
+    <div>
+      <div title="counter">{state.counter}</div>
+      <button onClick={() => dispatch(['increment'])}>Increment</button>
+      <button onClick={() => dispatch(['decrement'])}>Decrement</button>
+      <button onClick={() => dispatch(['addValue', 2])}>Add Two</button>
+    </div>
+  );
+};
+```
+
+## Types and reducer for examples
+
+```typescript
+type Actions =
+  | { type: 'increment' }
+  | { type: 'decrement' }
+  | { type: 'addValue'; payload: number };
+
+type State = { counter: number };
+
+const reducer = (state: State, action: Actions): State => {
+  switch (action.type) {
+    case 'increment':
+      return { ...state, counter: state.counter + 1 };
+    case 'decrement':
+      return { ...state, counter: state.counter - 1 };
+    case 'addValue':
+      return { ...state, counter: state.counter + action.payload };
+    default:
+      return state;
+  }
 };
 ```
