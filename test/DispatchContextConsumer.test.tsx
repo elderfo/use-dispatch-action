@@ -2,20 +2,24 @@ import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
-import { DispatchContextProvider, useDispatchContext } from '../src';
+import { DispatchContextConsumer, DispatchContextProvider } from '../src';
 import { Actions, reducer, State } from './reducer';
+import { DispatchProps } from '../src/types';
 
-const ComponentWtihReducer = () => {
+const ComponentWithReducer = () => {
   return (
     <DispatchContextProvider initialState={{ counter: 0 }} reducer={reducer}>
-      <UseDispatchCounterWithReducer />
+      <DispatchContextConsumer>
+        {props => <BodyWithReducer {...props} />}
+      </DispatchContextConsumer>
     </DispatchContextProvider>
   );
 };
 
-const UseDispatchCounterWithReducer = () => {
-  const [state, dispatch] = useDispatchContext<typeof reducer>();
-
+const BodyWithReducer = ({
+  state,
+  dispatch,
+}: DispatchProps<typeof reducer>) => {
   return (
     <div>
       <div title="counter">{state.counter}</div>
@@ -29,14 +33,17 @@ const UseDispatchCounterWithReducer = () => {
 const ComponentWithStateAction = () => {
   return (
     <DispatchContextProvider initialState={{ counter: 0 }} reducer={reducer}>
-      <UseDispatchCounterWithStateAction />
+      <DispatchContextConsumer>
+        {props => <BodyWithStateAction {...props} />}
+      </DispatchContextConsumer>
     </DispatchContextProvider>
   );
 };
 
-const UseDispatchCounterWithStateAction = () => {
-  const [state, dispatch] = useDispatchContext<State, Actions>();
-
+const BodyWithStateAction = ({
+  state,
+  dispatch,
+}: DispatchProps<State, Actions>) => {
   return (
     <div>
       <div title="counter">{state.counter}</div>
@@ -47,9 +54,9 @@ const UseDispatchCounterWithStateAction = () => {
   );
 };
 
-describe('useDispatchContext', () => {
+describe('DispatchContextConsumer', () => {
   it('Reducer dispatches expected actions', async () => {
-    render(<ComponentWtihReducer />);
+    render(<ComponentWithReducer />);
 
     fireEvent.click(screen.getByText('Increment'));
 

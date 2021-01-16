@@ -2,27 +2,30 @@ import { Dispatch, useCallback } from 'react';
 import { Action, DispatchAction } from './types';
 
 export const useDispatchAction = <
-  A extends Action,
-  K extends A['type'] = A['type'],
-  T = A extends Action<K, infer U> ? U : never
+  TAction extends Action,
+  TActionType extends TAction['type'] = TAction['type'],
+  TActionPayload = TAction extends Action<TActionType, infer U> ? U : never
 >(
-  dispatch: Dispatch<A>,
-  name: K
-): DispatchAction<T> => {
+  dispatch: Dispatch<TAction>,
+  actionType: TActionType
+): DispatchAction<TActionPayload> => {
   return useCallback(
     (...args: any[]) => {
       // This is just to hide a TS issue
       const internalDispatch = dispatch as Dispatch<any>;
 
       if (args && args.length) {
-        internalDispatch({ type: name, payload: args[0] as T });
+        internalDispatch({
+          type: actionType,
+          payload: args[0] as TActionPayload,
+        });
       } else {
-        internalDispatch({ type: name });
+        internalDispatch({ type: actionType });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dispatch, name]
-  ) as DispatchAction<T>;
+    [dispatch, actionType]
+  ) as DispatchAction<TActionPayload>;
 };
 
 export default useDispatchAction;
